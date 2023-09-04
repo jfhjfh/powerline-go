@@ -19,6 +19,8 @@ import (
 
 // ShellInfo holds the shell information
 type ShellInfo struct {
+	Line1Prefix           string
+	Line2Prefix           string
 	RootIndicator         string
 	ColorTemplate         string
 	EscapedDollar         string
@@ -395,8 +397,26 @@ func (p *powerline) drawRow(rowNum int, buffer *bytes.Buffer) {
 }
 
 func (p *powerline) draw() string {
+	var foreground, background uint8
+	if p.cfg.PrevError == 0 || p.cfg.StaticPromptIndicator {
+		foreground = 26
+		background = 0
+	} else {
+		foreground = 161
+		background = 0
+	}
 
 	var buffer bytes.Buffer
+
+	buffer.WriteString(p.fgColor(foreground))
+	buffer.WriteString(p.bgColor(background))
+	buffer.WriteString(p.shell.Line1Prefix)
+	buffer.WriteString(p.reset)
+
+	buffer.WriteString(p.fgColor(26))
+	buffer.WriteString(p.bgColor(0))
+	buffer.WriteString("")
+	buffer.WriteString(p.reset)
 
 	if p.cfg.Eval {
 		if p.align == alignLeft {
@@ -417,21 +437,14 @@ func (p *powerline) draw() string {
 	if p.cfg.PromptOnNewLine {
 		buffer.WriteRune('\n')
 
-		var foreground, background uint8
-		if p.cfg.PrevError == 0 || p.cfg.StaticPromptIndicator {
-			foreground = p.theme.CmdPassedFg
-			background = p.theme.CmdPassedBg
-		} else {
-			foreground = p.theme.CmdFailedFg
-			background = p.theme.CmdFailedBg
-		}
+		buffer.WriteString(p.fgColor(foreground))
+		buffer.WriteString(p.bgColor(background))
+		buffer.WriteString(p.shell.Line2Prefix)
+		buffer.WriteString(p.reset)
 
 		buffer.WriteString(p.fgColor(foreground))
 		buffer.WriteString(p.bgColor(background))
 		buffer.WriteString(p.shell.RootIndicator)
-		buffer.WriteString(p.reset)
-		buffer.WriteString(p.fgColor(background))
-		buffer.WriteString(p.symbols.Separator)
 		buffer.WriteString(p.reset)
 		buffer.WriteRune(' ')
 	}

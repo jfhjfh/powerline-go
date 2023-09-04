@@ -127,8 +127,10 @@ var defaults = Config{
 	},
 	Shells: ShellMap{
 		"bash": {
+			Line1Prefix:      "┏",
+			Line2Prefix:      "┗",
 			ColorTemplate:    "\\[\\e%s\\]",
-			RootIndicator:    "\\$",
+			RootIndicator:    "➤",
 			EscapedBackslash: `\\\\`,
 			EscapedBacktick:  "\\`",
 			EscapedDollar:    `\$`,
@@ -147,7 +149,7 @@ var defaults = Config{
 			EvalPromptRightSuffix: `"`,
 		},
 		"bare": {
-			ColorTemplate: "%s",
+			ColorTemplate:    "%s",
 			RootIndicator:    "$",
 			EscapedBackslash: `\`,
 			EscapedBacktick:  "`",
